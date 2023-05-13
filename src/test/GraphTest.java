@@ -1,15 +1,13 @@
 package test;
 
-import model.Graphinterface;
-import model.Graph;
+import model.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-import model.Vertex;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
 
 public class GraphTest {
     private Graph<Integer> graph;
@@ -18,25 +16,14 @@ public class GraphTest {
     void setUp() {
         graph = new Graph<>();
     }
-    @Test
-    void testGetIndexExistingVertex() {
-        Graph<String> graph = new Graph<>();
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        int expectedIndex = 1;
-        int actualIndex = graph.getIndex("B");
-        assertEquals(expectedIndex, actualIndex);
-    }
 
     @Test
     void testGetIndexNonExistingVertex() {
-        Graph<String> graph = new Graph<>();
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
+        graph.addVertex(1);
+        graph.addVertex(2);
+        graph.addVertex(3);
         int expectedIndex = -1;
-        int actualIndex = graph.getIndex("D");
+        int actualIndex = graph.getIndex(4);
         assertEquals(expectedIndex, actualIndex);
     }
 
@@ -48,7 +35,6 @@ public class GraphTest {
         assertEquals(expectedIndex, actualIndex);
     }
 
-
     @Test
     void testAddVertex() {
         graph.addVertex(1);
@@ -56,26 +42,27 @@ public class GraphTest {
         graph.addVertex(3);
         assertEquals(2, graph.getIndex(3));
     }
+
+    @Test
+    void testAddDirectedEdge() {
+        graph.addVertex(1);
+        graph.addVertex(2);
+        graph.addVertex(3);
+        graph.addDirectedEdge(1, 2);
+        graph.addDirectedEdge(2, 3);
+        assertEquals(1, graph.getAdjList().get(0).size());
+        assertEquals(1, graph.getAdjList().get(1).size());
+        assertEquals(0, graph.getAdjList().get(2).size());
+    }
+
     @Test
     public void testAddVertexEmpty() {
         Graph<Integer> graph = new Graph<>();
         graph.addVertex(1);
-        assertEquals(1, ((Graph<Integer>) graph).getVertexs().size());
-        assertEquals(1, ((Graph<Integer>) graph).getVertexs().get(0).getValue());
+        assertEquals(1, graph.getVertexs().size());
+        assertEquals(1, graph.getVertexs().get(0).getValue());
     }
 
-    @Test
-    public void testAddVertexDuplicate() {
-        Graph<String> graph = new Graph<>();
-        graph.addVertex("A");
-        graph.addVertex("B");
-        graph.addVertex("C");
-        graph.addVertex("A");
-        assertEquals(4, ((Graph<String>) graph).getVertexs().size());
-        assertEquals("A", ((Graph<String>) graph).getVertexs().get(0).getValue());
-        assertEquals("B", ((Graph<String>) graph).getVertexs().get(1).getValue());
-        assertEquals("C", ((Graph<String>) graph).getVertexs().get(2).getValue());
-    }
     @Test
     void testEmptyVertex() {
         ArrayList<Vertex<Integer>> v = graph.getVertexs();
@@ -94,23 +81,30 @@ public class GraphTest {
     }
 
     @Test
-    void testAddDirectedEdge() {
+    void testBFS() {
         graph.addVertex(1);
         graph.addVertex(2);
         graph.addVertex(3);
+        graph.addVertex(4);
+        graph.addVertex(7);
         graph.addDirectedEdge(1, 2);
+        graph.addDirectedEdge(3, 7);
         graph.addDirectedEdge(2, 3);
+        BFS.bfs(2);
         assertEquals(1, graph.getAdjList().get(0).size());
         assertEquals(1, graph.getAdjList().get(1).size());
-        assertEquals(0, graph.getAdjList().get(2).size());
+        assertEquals(1, graph.getAdjList().get(2).size());
+        assertEquals(0, graph.getAdjList().get(3).size());
+        assertEquals(0, graph.getAdjList().get(4).size());
     }
+
     @Test
     void testAddDirectedEdgeWithValidVertices() {
         Graph<String> graph = new Graph<>();
         graph.addVertex("A");
         graph.addVertex("B");
         graph.addDirectedEdge("A", "B");
-        assertEquals("A", ((Graph<String>) graph).getVertexs().get(0).getValue());
+        assertEquals("A", graph.getVertexs().get(0).getValue());
     }
 
     @Test
@@ -121,14 +115,17 @@ public class GraphTest {
         boolean test = true;
         try {
             ((Graph<String>) graph).getVertexs().get(1).getValue();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             test = false;
             assertFalse(test);
         }
     }
+
     @Test
-    void testBFS() {
+    void testBFSss() {
+// Initialize graph with vertices and edges
+        Graph<Integer> graph = new Graph<>();
         graph.addVertex(1);
         graph.addVertex(2);
         graph.addVertex(3);
@@ -136,27 +133,57 @@ public class GraphTest {
         graph.addNotDirectedEdge(1, 2);
         graph.addNotDirectedEdge(2, 3);
         graph.addNotDirectedEdge(3, 4);
-        graph.bfs(1);
+        // Perform BFS starting from vertex 1
+        BFS.bfs(1);
+
+// Assert distances of vertices from vertex 1
         assertEquals(0, graph.getVertexs().get(0).getDistance());
         assertEquals(1, graph.getVertexs().get(1).getDistance());
         assertEquals(2, graph.getVertexs().get(2).getDistance());
         assertEquals(3, graph.getVertexs().get(3).getDistance());
+
+    }
+
+    @Test
+    void testAddVertexDuplicate() {
+// Initialize graph with vertices
+        Graph<String> graph = new Graph<>();
+        graph.addVertex("A");
+        graph.addVertex("B");
+        graph.addVertex("C");
+        // Attempt to add duplicate vertex
+        graph.addVertex("A");
+
+// Assert that duplicate vertex is not added and existing vertices are still present
+        assertEquals(3, graph.getVertexs().size());
+        assertEquals("A", graph.getVertexs().get(0).getValue());
+        assertEquals("B", graph.getVertexs().get(1).getValue());
+        assertEquals("C", graph.getVertexs().get(2).getValue());
+
+
     }
     @Test
-    void testBFS2() {
+    void testBFSDirectedGraph() {
+// Initialize graph with vertices and directed edges
+        Graph<Integer> graph = new Graph<>();
         graph.addVertex(1);
         graph.addVertex(2);
         graph.addVertex(3);
         graph.addDirectedEdge(1, 2);
         graph.addDirectedEdge(3, 2);
-        graph.bfs(1);
+        // Perform BFS starting from vertex 1
+        BFS.bfs(1);
+
+// Assert number of edges in adjacency list of each vertex
         assertEquals(1, graph.getAdjList().get(0).size());
         assertEquals(0, graph.getAdjList().get(1).size());
         assertEquals(1, graph.getAdjList().get(2).size());
-    }
 
+    }
     @Test
     void testDFS() {
+// Initialize graph with vertices and edges
+        Graph<Integer> graph = new Graph<>();
         graph.addVertex(1);
         graph.addVertex(2);
         graph.addVertex(3);
@@ -164,28 +191,29 @@ public class GraphTest {
         graph.addNotDirectedEdge(1, 2);
         graph.addNotDirectedEdge(2, 3);
         graph.addNotDirectedEdge(3, 4);
-        graph.dfs();
-        graph.printTimeStamps();
+        // Perform DFS on graph
+        DFS.dfs();
+        DFS.printTimeStamps();
+
+// Assert final times of each vertex
         assertEquals(8, graph.getVertexs().get(0).getFinalTime());
         assertEquals(7, graph.getVertexs().get(1).getFinalTime());
         assertEquals(6, graph.getVertexs().get(2).getFinalTime());
         assertEquals(5, graph.getVertexs().get(3).getFinalTime());
     }
     @Test
-    void testDFS2() {
-        graph.addVertex(1);
-        graph.addVertex(2);
-        graph.addVertex(3);
-        graph.addVertex(4);
-        graph.addVertex(7);
-        graph.addDirectedEdge(1, 2);
-        graph.addDirectedEdge(3, 7);
-        graph.addDirectedEdge(2,3);
-        graph.bfs(2);
-        assertEquals(1, graph.getAdjList().get(0).size());
-        assertEquals(1, graph.getAdjList().get(1).size());
-        assertEquals(1, graph.getAdjList().get(2).size());
-        assertEquals(0, graph.getAdjList().get(3).size());
-        assertEquals(0, graph.getAdjList().get(4).size());
+    void testGetIndexExistingVertex() {
+// Initialize graph with vertices
+        Graph<String> graph = new Graph<>();
+        graph.addVertex("A");
+        graph.addVertex("B");
+        graph.addVertex("C");
+        // Get index of existing vertex
+        int expectedIndex = 1;
+        int actualIndex = graph.getIndex("B");
+
+// Assert index of vertex "B"
+        assertEquals(expectedIndex, actualIndex);
+
     }
 }
