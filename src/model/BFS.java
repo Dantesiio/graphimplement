@@ -11,7 +11,7 @@ public class BFS<T> {
         this.graph = graph;
     }
 
-    public static void bfs(T rootVertex) {
+    public static <T> void bfs(Graph<T> graph, T rootVertex) {
         int rootIndex = graph.getIndex(rootVertex);
         if (rootIndex == -1) {
             System.out.println("The vertex doesn't exist");
@@ -45,6 +45,6 @@ public class BFS<T> {
             current.setColor(Colors.NEGRO);
         }
     }
-
 }
+
 

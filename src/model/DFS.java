@@ -9,7 +9,7 @@ public class DFS<T> {
         this.graph = graph;
     }
 
-    public static void dfs() {
+    public void dfs() {
         for (Vertex<T> vertex : graph.getVertexs()) {
             vertex.setColor(Colors.BLANCO);
             vertex.setPrevious(null);
@@ -38,10 +38,11 @@ public class DFS<T> {
         vertex.setFinalTime(time);
     }
 
-    public static void printTimeStamps() {
+    public void printTimeStamps() {
         for (Vertex<T> vertex : graph.getVertexs()) {
             System.out.println(vertex.getValue() + " In time: " + vertex.getInitialTime() + "/" + vertex.getFinalTime() + "\n");
         }
     }
 
 }
+
